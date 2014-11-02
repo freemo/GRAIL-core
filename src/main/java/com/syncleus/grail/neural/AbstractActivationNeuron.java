@@ -1,6 +1,7 @@
 package com.syncleus.grail.neural;
 
 import com.syncleus.grail.activation.*;
+import com.syncleus.grail.graph.Edge;
 import com.tinkerpop.frames.modules.javahandler.Initializer;
 
 public abstract class AbstractActivationNeuron extends AbstractNeuron implements ActivationNeuron {
@@ -36,8 +37,11 @@ public abstract class AbstractActivationNeuron extends AbstractNeuron implements
     public void tick() {
         // calculate the current input activity
         this.setActivity(0.0);
-        for (final Synapse currentSynapse : this.getSourceSynapses()) {
-            this.setActivity( this.getActivity() + currentSynapse.getSource().getSignal() * currentSynapse.getWeight());
+        for (final Edge currentEdge : this.getSourceEdges()) {
+            if( currentEdge instanceof Synapse ) {
+                final Synapse currentSynapse = (Synapse) currentEdge;
+                this.setActivity(this.getActivity() + currentSynapse.getSource().getSignal() * currentSynapse.getWeight());
+            }
         }
         // calculate the activity function and set the result as the output
         this.setSignal( this.getActivationFunction().activate(this.getActivity()) );

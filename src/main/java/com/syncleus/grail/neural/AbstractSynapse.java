@@ -1,11 +1,11 @@
 package com.syncleus.grail.neural;
 
-import com.tinkerpop.blueprints.Edge;
+import com.syncleus.grail.graph.AbstractEdge;
 import com.tinkerpop.frames.modules.javahandler.*;
 
 import java.util.Random;
 
-public abstract class AbstractSynapse implements JavaHandlerContext<Edge>, Synapse {
+public abstract class AbstractSynapse extends AbstractEdge implements Synapse {
     private static final Random RANDOM = new Random();
 
     @Initializer

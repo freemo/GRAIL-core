@@ -1,4 +1,9 @@
 package com.syncleus.grail.neural;
 
-public class StaticNeuron {
+import com.tinkerpop.frames.modules.javahandler.*;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
+@TypeValue("StaticNeuron")
+@JavaHandlerClass(AbstractStaticNeuron.class)
+public interface StaticNeuron extends Neuron {
 }
