@@ -3,6 +3,7 @@ package com.syncleus.grail.graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.javahandler.*;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 // TODO: currently this only handles the immediate class, let it handle subclasses too.
 public abstract class AbstractNode implements JavaHandlerContext<Vertex>, Node {
@@ -66,8 +67,14 @@ public abstract class AbstractNode implements JavaHandlerContext<Vertex>, Node {
 
     @Override
     public <E extends Edge> Iterable<? extends E> getTargetEdges(final Class<? extends E> type) {
+//        System.out.println("in getTargetEdges");
         final TypeValue typeValue = AbstractNode.determineTypeValue(type);
-        return this.frameEdges(this.gremlin().outE("targets").has("type", typeValue.value()).E(), type);
+//        System.out.println("determined typeValue" + typeValue);
+//        GremlinPipeline<Vertex, ?> pipe = this.gremlin().out("targets");
+        GremlinPipeline<Vertex, com.tinkerpop.blueprints.Edge> pipe = this.gremlin().outE("targets");//.has("type", typeValue.value());
+//        pipe.count();
+//        System.out.println("constructed pipe: " + pipe.count());
+        return this.frameEdges(pipe, type);
     }
 
     @Override

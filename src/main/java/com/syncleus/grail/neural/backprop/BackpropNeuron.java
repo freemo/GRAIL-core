@@ -20,6 +20,6 @@ public interface BackpropNeuron extends ActivationNeuron {
     @Property("deltaTrain")
     Double getDeltaTrain();
 
-    @Property("learningRate")
+    @Property("deltaTrain")
     void setDeltaTrain(double deltaTrain);
 }

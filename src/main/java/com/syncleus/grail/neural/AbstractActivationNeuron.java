@@ -4,15 +4,13 @@ import com.syncleus.grail.activation.*;
 import com.syncleus.grail.graph.Edge;
 import com.tinkerpop.frames.modules.javahandler.Initializer;
 
-import java.text.DecimalFormat;
-
 public abstract class AbstractActivationNeuron extends AbstractNeuron implements ActivationNeuron {
 
     private ActivationFunction activationFunction;
 
     @Initializer
     public void init() {
-        this.setActivationFunctionClass(HyperbolicTangentActivationFunction.class);
+        this.setActivationFunctionClass(SineActivationFunction.class);
         this.setActivity(0.0);
     }
 
@@ -39,22 +37,22 @@ public abstract class AbstractActivationNeuron extends AbstractNeuron implements
     public void tick() {
         // calculate the current input activity
         this.setActivity(0.0);
-        System.out.println("trying to tick");
+//        System.out.println("trying to tick");
         for (final Edge currentEdge : this.getSourceEdges()) {
-            System.out.println("got an edge");
+//            System.out.println("got an edge");
             if( currentEdge instanceof Synapse ) {
-                System.out.println("it was a synapse");
+//                System.out.println("it was a synapse");
                 final Synapse currentSynapse = (Synapse) currentEdge;
                 this.setActivity(this.getActivity() + currentSynapse.getSource().getSignal() * currentSynapse.getWeight());
-                System.out.println();
-                System.out.println("activity was set: " + this.getActivity() + " the weight detected is: " + currentSynapse.getWeight() + "the source signal detected is: " + currentSynapse.getSource().getSignal());
-                System.out.println("source layer: " + currentSynapse.getSource().asVertex().getProperty("layer").toString());
-                System.out.println("target layer: " + currentSynapse.getTarget().asVertex().getProperty("layer").toString());
-                System.out.println("my layer: " + this.asVertex().getProperty("layer").toString());
+//                System.out.println();
+//                System.out.println("activity was set: " + this.getActivity() + " the weight detected is: " + currentSynapse.getWeight() + "the source signal detected is: " + currentSynapse.getSource().getSignal());
+//                System.out.println("source layer: " + currentSynapse.getSource().asVertex().getProperty("layer").toString());
+//                System.out.println("target layer: " + currentSynapse.getTarget().asVertex().getProperty("layer").toString());
+//                System.out.println("my layer: " + this.asVertex().getProperty("layer").toString());
             }
         }
         // calculate the activity function and set the result as the output
         this.setSignal( this.getActivationFunction().activate(this.getActivity()) );
-        System.out.println("signal was set: " + this.getSignal());
+//        System.out.println("signal was set: " + this.getSignal());
     }
 }

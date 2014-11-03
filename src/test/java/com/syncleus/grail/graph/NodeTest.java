@@ -13,6 +13,7 @@ import org.apache.commons.configuration.*;
 import org.junit.*;
 
 import java.io.File;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.*;
 
 import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration.INDEX_BACKEND_KEY;
@@ -42,12 +43,72 @@ public class NodeTest {
         //connect all hidden neurons to the output neuron
         for( BackpropNeuron hiddenNeuron : newHiddenNeurons ) {
             graph.addEdge(null, hiddenNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
+
+            //create bias neuron
+            final BackpropNeuron biasNeuron = NodeTest.createNeuron(graph, "bias");
+            biasNeuron.setSignal(1.0);
+            graph.addEdge(null, biasNeuron.asVertex(), hiddenNeuron.asVertex(), "targets", BackpropSynapse.class);
         }
+        //create bias neuron for output neuron
+        final BackpropNeuron biasNeuron = NodeTest.createNeuron(graph, "bias");
+        biasNeuron.setSignal(1.0);
+        graph.addEdge(null, biasNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
         graph.commit();
 
-        NodeTest.printGraph(graph);
         NodeTest.propagate(graph, 1.0, 1.0);
         NodeTest.printGraph(graph);
+        NodeTest.propagate(graph, 0.0, 1.0);
+        NodeTest.printGraph(graph);
+        for(int i = 0; i < 1000; i++) {
+//            try {
+                NodeTest.train(graph, 0.0, 1.0, 1.0);
+//            }
+//            catch(UndeclaredThrowableException caught) {
+//                caught.getUndeclaredThrowable().printStackTrace();
+//                throw caught;
+//            }
+//            if(true) return;
+            NodeTest.train(graph, 1.0, 0.0, 1.0);
+            NodeTest.train(graph, 1.0, 1.0, 0.0);
+            NodeTest.train(graph, 0.0, 0.0, 1.0);
+        }
+        NodeTest.propagate(graph, 1.0, 1.0);
+        NodeTest.printGraph(graph);
+        NodeTest.propagate(graph, 0.0, 1.0);
+        NodeTest.printGraph(graph);
+    }
+
+    private static void train(final FramedTransactionalGraph<?> graph, final double input1, final double input2, final double expected) {
+        NodeTest.propagate(graph, input1, input2);
+
+        final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
+        final BackpropNeuron outputNeuron = outputNeurons.next();
+        Assert.assertTrue(!outputNeurons.hasNext());
+        outputNeuron.setDeltaTrain(expected);
+        graph.commit();
+
+        final Iterator<BackpropNeuron> hiddenNeurons = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
+        hiddenNeurons.next().backpropagate();
+        hiddenNeurons.next().backpropagate();
+        hiddenNeurons.next().backpropagate();
+        hiddenNeurons.next().backpropagate();
+        Assert.assertTrue(!hiddenNeurons.hasNext());
+        graph.commit();
+
+        final Iterator<BackpropNeuron> inputNeurons = graph.getVertices("layer", "input", BackpropNeuron.class).iterator();
+        inputNeurons.next().backpropagate();
+        inputNeurons.next().backpropagate();
+        Assert.assertTrue(!inputNeurons.hasNext());
+        graph.commit();
+
+        final Iterator<BackpropNeuron> biasNeurons = graph.getVertices("layer", "bias", BackpropNeuron.class).iterator();
+        biasNeurons.next().backpropagate();
+        biasNeurons.next().backpropagate();
+        biasNeurons.next().backpropagate();
+        biasNeurons.next().backpropagate();
+        biasNeurons.next().backpropagate();
+        Assert.assertTrue(!biasNeurons.hasNext());
+        graph.commit();
     }
 
     private static void printGraph(final FramedTransactionalGraph<?> graph) {
@@ -67,7 +128,6 @@ public class NodeTest {
         final BackpropNeuron outputNeuron = outputNeurons.next();
         Assert.assertTrue(!outputNeurons.hasNext());
         System.out.println("outputNeuron signal: " + outputNeuron.getSignal());
-        graph.commit();
     }
 
     private static double propagate(final FramedTransactionalGraph<?> graph, final double input1, final double input2) {
