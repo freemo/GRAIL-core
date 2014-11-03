@@ -13,9 +13,9 @@ public interface Synapse extends Edge {
     @Property("weight")
     public void setWeight(double weight);
 
-    @OutVertex
+    @InVertex
     Neuron getTarget();
 
-    @InVertex
+    @OutVertex
     Neuron getSource();
 }

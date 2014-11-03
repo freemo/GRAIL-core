@@ -9,7 +9,4 @@ public abstract class AbstractNeuron extends AbstractNode implements Neuron {
         this.setSignal(0.0);
     }
 
-    @Override
-    public void tick() {
-    }
 }

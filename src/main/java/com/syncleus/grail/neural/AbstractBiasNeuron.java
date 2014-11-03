@@ -8,9 +8,4 @@ public abstract class AbstractBiasNeuron extends AbstractNeuron {
     public void init() {
         this.setSignal(1.0);
     }
-
-    @Override
-    public void tick() {
-        return;
-    }
 }

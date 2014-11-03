@@ -13,11 +13,8 @@ public abstract class AbstractBackpropNeuron extends AbstractActivationNeuron im
     @Override
     public void backpropagate() {
         double newDeltaTrain = 0.0;
-        for (final Synapse synapse : this.getTargetEdges(Synapse.class)) {
-            final Neuron targetNeuron = synapse.getTarget();
-            if( ! (targetNeuron instanceof BackpropNeuron) )
-                throw new IllegalStateException("A backprop neuron is connected to a non-backprop neuron.");
-            final BackpropNeuron target = (BackpropNeuron) targetNeuron;
+        for (final BackpropSynapse synapse : this.getTargetEdges(BackpropSynapse.class)) {
+            final BackpropNeuron target = synapse.getTarget();
             newDeltaTrain += (synapse.getWeight() * target.getDeltaTrain());
         }
         newDeltaTrain *= this.getActivationFunction().activateDerivative(this.getActivity());

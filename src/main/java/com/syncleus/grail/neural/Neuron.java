@@ -7,9 +7,6 @@ import com.tinkerpop.frames.modules.javahandler.*;
 
 @JavaHandlerClass(AbstractNeuron.class)
 public interface Neuron extends Node {
-    @JavaHandler
-    void tick();
-
     @Property("signal")
     Double getSignal();
 
