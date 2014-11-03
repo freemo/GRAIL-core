@@ -6,7 +6,7 @@ import com.tinkerpop.frames.modules.javahandler.Initializer;
 public abstract class AbstractBackpropNeuron extends AbstractActivationNeuron implements BackpropNeuron {
     @Initializer
     public void init() {
-        this.setLearningRate(0.0175);
+        this.setLearningRate(0.175);
         this.setDeltaTrain(0.0);
     }
 

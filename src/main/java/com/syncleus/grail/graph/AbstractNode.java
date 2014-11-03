@@ -92,7 +92,7 @@ public abstract class AbstractNode implements JavaHandlerContext<Vertex>, Node {
     @Override
     public <E extends Edge> Iterable<? extends E> getSourceEdges(final Class<? extends E> type) {
         final TypeValue typeValue = AbstractNode.determineTypeValue(type);
-        return this.frameEdges(this.gremlin().inE("targets").has("type", typeValue.value()).E(), type);
+        return this.frameEdges(this.gremlin().inE("targets")/*.has("type", typeValue.value()).E()*/, type);
     }
 
     @Override

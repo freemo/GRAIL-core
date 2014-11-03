@@ -2,6 +2,7 @@ package com.syncleus.grail.neural;
 
 import com.syncleus.grail.activation.*;
 import com.syncleus.grail.graph.Edge;
+import com.syncleus.grail.neural.backprop.*;
 import com.tinkerpop.frames.modules.javahandler.Initializer;
 
 public abstract class AbstractActivationNeuron extends AbstractNeuron implements ActivationNeuron {
@@ -38,7 +39,7 @@ public abstract class AbstractActivationNeuron extends AbstractNeuron implements
         // calculate the current input activity
         this.setActivity(0.0);
 //        System.out.println("trying to tick");
-        for (final Edge currentEdge : this.getSourceEdges()) {
+        for (final Edge currentEdge : this.getSourceEdges(BackpropSynapse.class)) {
 //            System.out.println("got an edge");
             if( currentEdge instanceof Synapse ) {
 //                System.out.println("it was a synapse");

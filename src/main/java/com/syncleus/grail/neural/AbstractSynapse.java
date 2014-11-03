@@ -10,6 +10,6 @@ public abstract class AbstractSynapse extends AbstractEdge implements Synapse {
 
     @Initializer
     public void init() {
-        this.setWeight(((RANDOM.nextDouble() * 2.0) - 1.0) / 10000.0);
+        this.setWeight(((RANDOM.nextDouble() * 2.0) - 1.0) / 1000.0);
     }
 }

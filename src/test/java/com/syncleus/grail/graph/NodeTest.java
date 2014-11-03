@@ -1,5 +1,6 @@
 package com.syncleus.grail.graph;
 
+import com.syncleus.grail.activation.*;
 import com.syncleus.grail.neural.*;
 import com.syncleus.grail.neural.backprop.*;
 import com.thinkaurelius.titan.core.*;
@@ -31,7 +32,7 @@ public class NodeTest {
         newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
         newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
         newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
-        newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
+//        newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
         final BackpropNeuron newOutputNeuron = NodeTest.createNeuron(graph, "output");
 
         //connect all input neurons to hidden neurons
@@ -57,26 +58,25 @@ public class NodeTest {
 
         NodeTest.propagate(graph, 1.0, 1.0);
         NodeTest.printGraph(graph);
-        NodeTest.propagate(graph, 0.0, 1.0);
+        NodeTest.propagate(graph, 0.0, 0.0);
         NodeTest.printGraph(graph);
-        for(int i = 0; i < 1000; i++) {
-//            try {
-                NodeTest.train(graph, 0.0, 1.0, 1.0);
-//            }
-//            catch(UndeclaredThrowableException caught) {
-//                caught.getUndeclaredThrowable().printStackTrace();
-//                throw caught;
-//            }
-//            if(true) return;
+        for(int i = 0; i < 10000; i++) {
+            NodeTest.train(graph, 0.0, 1.0, 1.0);
             NodeTest.train(graph, 1.0, 0.0, 1.0);
             NodeTest.train(graph, 1.0, 1.0, 0.0);
-            NodeTest.train(graph, 0.0, 0.0, 1.0);
+            NodeTest.train(graph, 0.0, 0.0, 0.0);
         }
         NodeTest.propagate(graph, 1.0, 1.0);
         NodeTest.printGraph(graph);
+        NodeTest.propagate(graph, 0.0, 0.0);
+        NodeTest.printGraph(graph);
         NodeTest.propagate(graph, 0.0, 1.0);
         NodeTest.printGraph(graph);
+        NodeTest.propagate(graph, 1.0, 0.0);
+        NodeTest.printGraph(graph);
     }
+
+    private static final ActivationFunction activationFunction = new SineActivationFunction();
 
     private static void train(final FramedTransactionalGraph<?> graph, final double input1, final double input2, final double expected) {
         NodeTest.propagate(graph, input1, input2);
@@ -84,13 +84,13 @@ public class NodeTest {
         final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
         final BackpropNeuron outputNeuron = outputNeurons.next();
         Assert.assertTrue(!outputNeurons.hasNext());
-        outputNeuron.setDeltaTrain(expected);
+        outputNeuron.setDeltaTrain((expected - outputNeuron.getSignal()) * activationFunction.activateDerivative(outputNeuron.getActivity()) );
         graph.commit();
 
         final Iterator<BackpropNeuron> hiddenNeurons = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
         hiddenNeurons.next().backpropagate();
         hiddenNeurons.next().backpropagate();
-        hiddenNeurons.next().backpropagate();
+//        hiddenNeurons.next().backpropagate();
         hiddenNeurons.next().backpropagate();
         Assert.assertTrue(!hiddenNeurons.hasNext());
         graph.commit();
@@ -106,7 +106,7 @@ public class NodeTest {
         biasNeurons.next().backpropagate();
         biasNeurons.next().backpropagate();
         biasNeurons.next().backpropagate();
-        biasNeurons.next().backpropagate();
+//        biasNeurons.next().backpropagate();
         Assert.assertTrue(!biasNeurons.hasNext());
         graph.commit();
     }
@@ -121,13 +121,81 @@ public class NodeTest {
         System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
         System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
         System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
-        System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
+//        System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
         Assert.assertTrue(!hiddenNeurons.hasNext());
 
         final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
         final BackpropNeuron outputNeuron = outputNeurons.next();
         Assert.assertTrue(!outputNeurons.hasNext());
+
         System.out.println("outputNeuron signal: " + outputNeuron.getSignal());
+        System.out.println("outputNeuron activity: " + outputNeuron.getActivity());
+        System.out.println("outputNeuron source size: " + NodeTest.getIteratorSize(outputNeuron.getSourceEdges().iterator()));
+        System.out.println("outputNeuron source synapses: ");
+        for( BackpropSynapse sourceEdge : outputNeuron.getSourceEdges(BackpropSynapse.class) ) {
+            System.out.println("weight: " + sourceEdge.getWeight());
+            System.out.println("signal: " + sourceEdge.getSource().getSignal());
+            System.out.println("layer: " + sourceEdge.getSource().asVertex().getProperty("layer"));
+        }
+
+
+
+
+        Iterator<BackpropNeuron> hiddenNeuronsAgain = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
+        hiddenNeuronsAgain.next().setSignal(1.0);
+        hiddenNeuronsAgain.next().setSignal(1.0);
+        hiddenNeuronsAgain.next().setSignal(1.0);
+        Assert.assertTrue(!hiddenNeuronsAgain.hasNext());
+        graph.commit();
+
+        Iterator<BackpropNeuron> outputNeuronsAgain = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
+        BackpropNeuron outputNeuronAgain = outputNeuronsAgain.next();
+        Assert.assertTrue(!outputNeuronsAgain.hasNext());
+
+        outputNeuronAgain.tick();
+        System.out.println("outputNeuronAgain signal: " + outputNeuronAgain.getSignal());
+        System.out.println("outputNeuronAgain activity: " + outputNeuronAgain.getActivity());
+        System.out.println("outputNeuronAgain source size: " + NodeTest.getIteratorSize(outputNeuronAgain.getSourceEdges().iterator()));
+        System.out.println("outputNeuronAgain source synapses: ");
+        for( BackpropSynapse sourceEdge : outputNeuronAgain.getSourceEdges(BackpropSynapse.class) ) {
+            System.out.println("weight: " + sourceEdge.getWeight());
+            System.out.println("signal: " + sourceEdge.getSource().getSignal());
+            System.out.println("layer: " + sourceEdge.getSource().asVertex().getProperty("layer"));
+        }
+
+
+
+
+        hiddenNeuronsAgain = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
+        hiddenNeuronsAgain.next().setSignal(-1.0);
+        hiddenNeuronsAgain.next().setSignal(-1.0);
+        hiddenNeuronsAgain.next().setSignal(-1.0);
+        Assert.assertTrue(!hiddenNeuronsAgain.hasNext());
+        graph.commit();
+
+        outputNeuronsAgain = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
+        outputNeuronAgain = outputNeuronsAgain.next();
+        Assert.assertTrue(!outputNeuronsAgain.hasNext());
+
+        outputNeuronAgain.tick();
+        System.out.println("outputNeuronAgain signal: " + outputNeuronAgain.getSignal());
+        System.out.println("outputNeuronAgain activity: " + outputNeuronAgain.getActivity());
+        System.out.println("outputNeuronAgain source size: " + NodeTest.getIteratorSize(outputNeuronAgain.getSourceEdges().iterator()));
+        System.out.println("outputNeuronAgain source synapses: ");
+        for( BackpropSynapse sourceEdge : outputNeuronAgain.getSourceEdges(BackpropSynapse.class) ) {
+            System.out.println("weight: " + sourceEdge.getWeight());
+            System.out.println("signal: " + sourceEdge.getSource().getSignal());
+            System.out.println("layer: " + sourceEdge.getSource().asVertex().getProperty("layer"));
+        }
+    }
+
+    private static int getIteratorSize(Iterator it) {
+        int count = 0;
+        while(it.hasNext()) {
+            it.next();
+            count++;
+        }
+        return count;
     }
 
     private static double propagate(final FramedTransactionalGraph<?> graph, final double input1, final double input2) {
@@ -140,7 +208,7 @@ public class NodeTest {
         final Iterator<BackpropNeuron> hiddenNeurons = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
         hiddenNeurons.next().tick();
         hiddenNeurons.next().tick();
-        hiddenNeurons.next().tick();
+//        hiddenNeurons.next().tick();
         hiddenNeurons.next().tick();
         Assert.assertTrue(!hiddenNeurons.hasNext());
         graph.commit();
