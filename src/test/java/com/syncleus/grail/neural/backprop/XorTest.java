@@ -1,28 +1,15 @@
-package com.syncleus.grail.graph;
+package com.syncleus.grail.neural.backprop;
 
 import com.syncleus.grail.activation.*;
-import com.syncleus.grail.neural.*;
-import com.syncleus.grail.neural.backprop.*;
-import com.thinkaurelius.titan.core.*;
-import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
+import com.syncleus.grail.graph.*;
 import com.tinkerpop.frames.*;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
-import org.apache.commons.configuration.*;
 import org.junit.*;
-
-import java.io.File;
 import java.util.*;
-
-import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration.INDEX_BACKEND_KEY;
-import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_DIRECTORY_KEY;
 
 public class XorTest {
     @Test
     public void testXor() {
-        final FramedTransactionalGraph<?> graph = XorTest.makeBlankGraph();
+        final FramedTransactionalGraph<?> graph = BlankGraphFactory.makeTinkerGraph();
 
         final List<BackpropNeuron> newInputNeurons = new ArrayList<BackpropNeuron>(2);
         newInputNeurons.add(XorTest.createNeuron(graph, "input"));
@@ -99,43 +86,6 @@ public class XorTest {
         graph.commit();
     }
 
-    private static void printGraph(final FramedTransactionalGraph<?> graph) {
-        final Iterator<BackpropNeuron> inputNeurons = graph.getVertices("layer", "input", BackpropNeuron.class).iterator();
-        System.out.println("input signal: " + inputNeurons.next().getSignal());
-        System.out.println("input signal: " + inputNeurons.next().getSignal());
-        Assert.assertTrue(!inputNeurons.hasNext());
-
-        final Iterator<BackpropNeuron> hiddenNeurons = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
-        System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
-        System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
-        System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
-        Assert.assertTrue(!hiddenNeurons.hasNext());
-
-        final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
-        final BackpropNeuron outputNeuron = outputNeurons.next();
-        Assert.assertTrue(!outputNeurons.hasNext());
-
-        System.out.println("outputNeuron signal: " + outputNeuron.getSignal());
-        System.out.println("outputNeuron activity: " + outputNeuron.getActivity());
-        System.out.println("outputNeuron source size: " + XorTest.getIteratorSize(outputNeuron.getSourceEdges().iterator()));
-        System.out.println("outputNeuron source synapses: ");
-        for( BackpropSynapse sourceEdge : outputNeuron.getSourceEdges(BackpropSynapse.class) ) {
-            System.out.println("weight: " + sourceEdge.getWeight());
-            System.out.println("signal: " + sourceEdge.getSource().getSignal());
-            System.out.println("layer: " + sourceEdge.getSource().asVertex().getProperty("layer"));
-        }
-        System.out.println();
-    }
-
-    private static int getIteratorSize(Iterator it) {
-        int count = 0;
-        while(it.hasNext()) {
-            it.next();
-            count++;
-        }
-        return count;
-    }
-
     private static double propagate(final FramedTransactionalGraph<?> graph, final double input1, final double input2) {
         final Iterator<BackpropNeuron> inputNeurons = graph.getVertices("layer", "input", BackpropNeuron.class).iterator();
         inputNeurons.next().setSignal(input1);
@@ -162,34 +112,5 @@ public class XorTest {
         final BackpropNeuron neuron = graph.addVertex(null, BackpropNeuron.class);
         neuron.asVertex().setProperty("layer", layer);
         return neuron;
-    }
-
-    private static FramedTransactionalGraph makeBlankGraph() {
-        BaseConfiguration config = new BaseConfiguration();
-        Configuration storage = config.subset(GraphDatabaseConfiguration.STORAGE_NAMESPACE);
-        // configuring local backend
-        storage.setProperty(GraphDatabaseConfiguration.STORAGE_BACKEND_KEY, "local");
-        storage.setProperty(GraphDatabaseConfiguration.STORAGE_DIRECTORY_KEY, "./target/TitanBackpropDB");
-        // configuring elastic search index
-        Configuration index = storage.subset(GraphDatabaseConfiguration.INDEX_NAMESPACE).subset("search");
-        index.setProperty(INDEX_BACKEND_KEY, "elasticsearch");
-        index.setProperty("local-mode", true);
-        index.setProperty("client-only", false);
-        index.setProperty(STORAGE_DIRECTORY_KEY, "./target/TitanBackpropDB" + File.separator + "es");
-
-        TitanGraph graph = TitanFactory.open(config);
-        if( graph.getVertices().iterator().hasNext() )
-            throw new IllegalStateException("fix this!");
-
-        final Module typedModule = new TypedGraphModuleBuilder()
-                                           .withClass(Synapse.class)
-                                           .withClass(BackpropSynapse.class)
-                                           .withClass(BackpropNeuron.class)
-                                           .build();
-
-        final FramedGraphFactory factory = new FramedGraphFactory(typedModule, new GremlinGroovyModule(), new JavaHandlerModule());
-
-        //return factory.create(graph);
-        return factory.create(new MockTransactionalTinkerGraph());
     }
 }
