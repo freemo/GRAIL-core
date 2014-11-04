@@ -10,7 +10,6 @@ import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
-import com.tinkerpop.rexster.util.MockTinkerTransactionalGraph;
 import org.apache.commons.configuration.*;
 import org.junit.*;
 
