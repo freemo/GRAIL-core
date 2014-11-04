@@ -5,11 +5,13 @@ import com.syncleus.grail.neural.*;
 import com.syncleus.grail.neural.backprop.*;
 import com.thinkaurelius.titan.core.*;
 import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
+import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 import com.tinkerpop.frames.*;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
+import com.tinkerpop.rexster.util.MockTinkerTransactionalGraph;
 import org.apache.commons.configuration.*;
 import org.junit.*;
 
@@ -20,20 +22,19 @@ import java.util.*;
 import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration.INDEX_BACKEND_KEY;
 import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_DIRECTORY_KEY;
 
-public class NodeTest {
+public class XorTest {
     @Test
     public void testNodeInstantiation() {
-        final FramedTransactionalGraph<?> graph = NodeTest.makeBlankGraph();
+        final FramedTransactionalGraph<?> graph = XorTest.makeBlankGraph();
 
         final List<BackpropNeuron> newInputNeurons = new ArrayList<BackpropNeuron>(2);
-        newInputNeurons.add(NodeTest.createNeuron(graph, "input"));
-        newInputNeurons.add(NodeTest.createNeuron(graph, "input"));
+        newInputNeurons.add(XorTest.createNeuron(graph, "input"));
+        newInputNeurons.add(XorTest.createNeuron(graph, "input"));
         final List<BackpropNeuron> newHiddenNeurons = new ArrayList<BackpropNeuron>(4);
-        newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
-        newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
-        newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
-//        newHiddenNeurons.add(NodeTest.createNeuron(graph, "hidden"));
-        final BackpropNeuron newOutputNeuron = NodeTest.createNeuron(graph, "output");
+        newHiddenNeurons.add(XorTest.createNeuron(graph, "hidden"));
+        newHiddenNeurons.add(XorTest.createNeuron(graph, "hidden"));
+        newHiddenNeurons.add(XorTest.createNeuron(graph, "hidden"));
+        final BackpropNeuron newOutputNeuron = XorTest.createNeuron(graph, "output");
 
         //connect all input neurons to hidden neurons
         for( BackpropNeuron inputNeuron : newInputNeurons ) {
@@ -46,40 +47,46 @@ public class NodeTest {
             graph.addEdge(null, hiddenNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
 
             //create bias neuron
-            final BackpropNeuron biasNeuron = NodeTest.createNeuron(graph, "bias");
+            final BackpropNeuron biasNeuron = XorTest.createNeuron(graph, "bias");
             biasNeuron.setSignal(1.0);
             graph.addEdge(null, biasNeuron.asVertex(), hiddenNeuron.asVertex(), "targets", BackpropSynapse.class);
         }
         //create bias neuron for output neuron
-        final BackpropNeuron biasNeuron = NodeTest.createNeuron(graph, "bias");
+        final BackpropNeuron biasNeuron = XorTest.createNeuron(graph, "bias");
         biasNeuron.setSignal(1.0);
         graph.addEdge(null, biasNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
         graph.commit();
 
-        NodeTest.propagate(graph, 1.0, 1.0);
-        NodeTest.printGraph(graph);
-        NodeTest.propagate(graph, 0.0, 0.0);
-        NodeTest.printGraph(graph);
+        XorTest.propagate(graph, 1.0, 1.0);
+        XorTest.printGraph(graph);
+        XorTest.propagate(graph, 0.0, 0.0);
+        XorTest.printGraph(graph);
+        System.out.println("=================================================");
+        System.out.println("=================================================");
+        System.out.println("=================================================");
         for(int i = 0; i < 10000; i++) {
-            NodeTest.train(graph, 0.0, 1.0, 1.0);
-            NodeTest.train(graph, 1.0, 0.0, 1.0);
-            NodeTest.train(graph, 1.0, 1.0, 0.0);
-            NodeTest.train(graph, 0.0, 0.0, 0.0);
+            XorTest.train(graph, 0.0, 1.0, 1.0);
+            XorTest.train(graph, 1.0, 0.0, 1.0);
+            XorTest.train(graph, 1.0, 1.0, 0.0);
+            XorTest.train(graph, 0.0, 0.0, 0.0);
         }
-        NodeTest.propagate(graph, 1.0, 1.0);
-        NodeTest.printGraph(graph);
-        NodeTest.propagate(graph, 0.0, 0.0);
-        NodeTest.printGraph(graph);
-        NodeTest.propagate(graph, 0.0, 1.0);
-        NodeTest.printGraph(graph);
-        NodeTest.propagate(graph, 1.0, 0.0);
-        NodeTest.printGraph(graph);
+        System.out.println("=================================================");
+        System.out.println("=================================================");
+        System.out.println("=================================================");
+        XorTest.propagate(graph, 1.0, 1.0);
+        XorTest.printGraph(graph);
+        XorTest.propagate(graph, 0.0, 0.0);
+        XorTest.printGraph(graph);
+        XorTest.propagate(graph, 0.0, 1.0);
+        XorTest.printGraph(graph);
+        XorTest.propagate(graph, 1.0, 0.0);
+        XorTest.printGraph(graph);
     }
 
     private static final ActivationFunction activationFunction = new SineActivationFunction();
 
     private static void train(final FramedTransactionalGraph<?> graph, final double input1, final double input2, final double expected) {
-        NodeTest.propagate(graph, input1, input2);
+        XorTest.propagate(graph, input1, input2);
 
         final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
         final BackpropNeuron outputNeuron = outputNeurons.next();
@@ -90,7 +97,6 @@ public class NodeTest {
         final Iterator<BackpropNeuron> hiddenNeurons = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
         hiddenNeurons.next().backpropagate();
         hiddenNeurons.next().backpropagate();
-//        hiddenNeurons.next().backpropagate();
         hiddenNeurons.next().backpropagate();
         Assert.assertTrue(!hiddenNeurons.hasNext());
         graph.commit();
@@ -106,7 +112,6 @@ public class NodeTest {
         biasNeurons.next().backpropagate();
         biasNeurons.next().backpropagate();
         biasNeurons.next().backpropagate();
-//        biasNeurons.next().backpropagate();
         Assert.assertTrue(!biasNeurons.hasNext());
         graph.commit();
     }
@@ -121,7 +126,6 @@ public class NodeTest {
         System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
         System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
         System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
-//        System.out.println("hiddenNeuron signal: " + hiddenNeurons.next().getSignal());
         Assert.assertTrue(!hiddenNeurons.hasNext());
 
         final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
@@ -130,63 +134,14 @@ public class NodeTest {
 
         System.out.println("outputNeuron signal: " + outputNeuron.getSignal());
         System.out.println("outputNeuron activity: " + outputNeuron.getActivity());
-        System.out.println("outputNeuron source size: " + NodeTest.getIteratorSize(outputNeuron.getSourceEdges().iterator()));
+        System.out.println("outputNeuron source size: " + XorTest.getIteratorSize(outputNeuron.getSourceEdges().iterator()));
         System.out.println("outputNeuron source synapses: ");
         for( BackpropSynapse sourceEdge : outputNeuron.getSourceEdges(BackpropSynapse.class) ) {
             System.out.println("weight: " + sourceEdge.getWeight());
             System.out.println("signal: " + sourceEdge.getSource().getSignal());
             System.out.println("layer: " + sourceEdge.getSource().asVertex().getProperty("layer"));
         }
-
-
-
-
-        Iterator<BackpropNeuron> hiddenNeuronsAgain = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
-        hiddenNeuronsAgain.next().setSignal(1.0);
-        hiddenNeuronsAgain.next().setSignal(1.0);
-        hiddenNeuronsAgain.next().setSignal(1.0);
-        Assert.assertTrue(!hiddenNeuronsAgain.hasNext());
-        graph.commit();
-
-        Iterator<BackpropNeuron> outputNeuronsAgain = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
-        BackpropNeuron outputNeuronAgain = outputNeuronsAgain.next();
-        Assert.assertTrue(!outputNeuronsAgain.hasNext());
-
-        outputNeuronAgain.tick();
-        System.out.println("outputNeuronAgain signal: " + outputNeuronAgain.getSignal());
-        System.out.println("outputNeuronAgain activity: " + outputNeuronAgain.getActivity());
-        System.out.println("outputNeuronAgain source size: " + NodeTest.getIteratorSize(outputNeuronAgain.getSourceEdges().iterator()));
-        System.out.println("outputNeuronAgain source synapses: ");
-        for( BackpropSynapse sourceEdge : outputNeuronAgain.getSourceEdges(BackpropSynapse.class) ) {
-            System.out.println("weight: " + sourceEdge.getWeight());
-            System.out.println("signal: " + sourceEdge.getSource().getSignal());
-            System.out.println("layer: " + sourceEdge.getSource().asVertex().getProperty("layer"));
-        }
-
-
-
-
-        hiddenNeuronsAgain = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
-        hiddenNeuronsAgain.next().setSignal(-1.0);
-        hiddenNeuronsAgain.next().setSignal(-1.0);
-        hiddenNeuronsAgain.next().setSignal(-1.0);
-        Assert.assertTrue(!hiddenNeuronsAgain.hasNext());
-        graph.commit();
-
-        outputNeuronsAgain = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
-        outputNeuronAgain = outputNeuronsAgain.next();
-        Assert.assertTrue(!outputNeuronsAgain.hasNext());
-
-        outputNeuronAgain.tick();
-        System.out.println("outputNeuronAgain signal: " + outputNeuronAgain.getSignal());
-        System.out.println("outputNeuronAgain activity: " + outputNeuronAgain.getActivity());
-        System.out.println("outputNeuronAgain source size: " + NodeTest.getIteratorSize(outputNeuronAgain.getSourceEdges().iterator()));
-        System.out.println("outputNeuronAgain source synapses: ");
-        for( BackpropSynapse sourceEdge : outputNeuronAgain.getSourceEdges(BackpropSynapse.class) ) {
-            System.out.println("weight: " + sourceEdge.getWeight());
-            System.out.println("signal: " + sourceEdge.getSource().getSignal());
-            System.out.println("layer: " + sourceEdge.getSource().asVertex().getProperty("layer"));
-        }
+        System.out.println();
     }
 
     private static int getIteratorSize(Iterator it) {
@@ -208,7 +163,6 @@ public class NodeTest {
         final Iterator<BackpropNeuron> hiddenNeurons = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
         hiddenNeurons.next().tick();
         hiddenNeurons.next().tick();
-//        hiddenNeurons.next().tick();
         hiddenNeurons.next().tick();
         Assert.assertTrue(!hiddenNeurons.hasNext());
         graph.commit();
@@ -245,13 +199,14 @@ public class NodeTest {
             throw new IllegalStateException("fix this!");
 
         final Module typedModule = new TypedGraphModuleBuilder()
-                .withClass(Synapse.class)
-                .withClass(BackpropSynapse.class)
-                .withClass(BackpropNeuron.class)
-                .build();
+                                           .withClass(Synapse.class)
+                                           .withClass(BackpropSynapse.class)
+                                           .withClass(BackpropNeuron.class)
+                                           .build();
 
         final FramedGraphFactory factory = new FramedGraphFactory(typedModule, new GremlinGroovyModule(), new JavaHandlerModule());
 
-        return factory.create(graph);
+        //return factory.create(graph);
+        return factory.create(new MockTinkerTransactionalGraph());
     }
 }
