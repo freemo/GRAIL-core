@@ -191,6 +191,6 @@ public class XorTest {
         final FramedGraphFactory factory = new FramedGraphFactory(typedModule, new GremlinGroovyModule(), new JavaHandlerModule());
 
         //return factory.create(graph);
-        return factory.create(new MockTinkerTransactionalGraph());
+        return factory.create(new MockTransactionalTinkerGraph());
     }
 }
