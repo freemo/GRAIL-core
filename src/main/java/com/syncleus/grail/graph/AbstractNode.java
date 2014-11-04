@@ -67,13 +67,8 @@ public abstract class AbstractNode implements JavaHandlerContext<Vertex>, Node {
 
     @Override
     public <E extends Edge> Iterable<? extends E> getTargetEdges(final Class<? extends E> type) {
-//        System.out.println("in getTargetEdges");
         final TypeValue typeValue = AbstractNode.determineTypeValue(type);
-//        System.out.println("determined typeValue" + typeValue);
-//        GremlinPipeline<Vertex, ?> pipe = this.gremlin().out("targets");
         GremlinPipeline<Vertex, com.tinkerpop.blueprints.Edge> pipe = this.gremlin().outE("targets");//.has("type", typeValue.value());
-//        pipe.count();
-//        System.out.println("constructed pipe: " + pipe.count());
         return this.frameEdges(pipe, type);
     }
 

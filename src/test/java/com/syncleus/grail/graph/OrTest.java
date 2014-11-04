@@ -21,7 +21,7 @@ import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfigu
 import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration.STORAGE_DIRECTORY_KEY;
 
 public class OrTest {
-   // @Test
+   @Test
     public void testOr() {
         final FramedTransactionalGraph<?> graph = OrTest.makeBlankGraph();
 
@@ -40,30 +40,17 @@ public class OrTest {
         graph.addEdge(null, biasNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
         graph.commit();
 
-        OrTest.propagate(graph, 1.0, 1.0);
-        OrTest.printGraph(graph);
-        OrTest.propagate(graph, 1.0, 0.0);
-        OrTest.printGraph(graph);
-        System.out.println("=================================================");
-        System.out.println("=================================================");
-        System.out.println("=================================================");
         for(int i = 0; i < 10000; i++) {
             OrTest.train(graph, 0.0, 1.0, 1.0);
             OrTest.train(graph, 1.0, 0.0, 1.0);
             OrTest.train(graph, 1.0, 1.0, 1.0);
             OrTest.train(graph, 0.0, 0.0, 0.0);
         }
-        System.out.println("=================================================");
-        System.out.println("=================================================");
-        System.out.println("=================================================");
-        OrTest.propagate(graph, 1.0, 1.0);
-        OrTest.printGraph(graph);
-        OrTest.propagate(graph, 0.0, 0.0);
-        OrTest.printGraph(graph);
-        OrTest.propagate(graph, 0.0, 1.0);
-        OrTest.printGraph(graph);
-        OrTest.propagate(graph, 1.0, 0.0);
-        OrTest.printGraph(graph);
+
+        Assert.assertTrue(OrTest.propagate(graph, 1.0, 1.0) > 0.75);
+        Assert.assertTrue(OrTest.propagate(graph, 0.0, 0.0) < 0.25);
+        Assert.assertTrue(OrTest.propagate(graph, 1.0, 0.0) > 0.75);
+        Assert.assertTrue(OrTest.propagate(graph, 0.0, 1.0) > 0.75);
     }
 
     private static final ActivationFunction activationFunction = new SineActivationFunction();

@@ -57,30 +57,16 @@ public class XorTest {
         graph.addEdge(null, biasNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
         graph.commit();
 
-        XorTest.propagate(graph, 1.0, 1.0);
-        XorTest.printGraph(graph);
-        XorTest.propagate(graph, 0.0, 0.0);
-        XorTest.printGraph(graph);
-        System.out.println("=================================================");
-        System.out.println("=================================================");
-        System.out.println("=================================================");
         for(int i = 0; i < 10000; i++) {
             XorTest.train(graph, 0.0, 1.0, 1.0);
             XorTest.train(graph, 1.0, 0.0, 1.0);
             XorTest.train(graph, 1.0, 1.0, 0.0);
             XorTest.train(graph, 0.0, 0.0, 0.0);
         }
-        System.out.println("=================================================");
-        System.out.println("=================================================");
-        System.out.println("=================================================");
-        XorTest.propagate(graph, 1.0, 1.0);
-        XorTest.printGraph(graph);
-        XorTest.propagate(graph, 0.0, 0.0);
-        XorTest.printGraph(graph);
-        XorTest.propagate(graph, 0.0, 1.0);
-        XorTest.printGraph(graph);
-        XorTest.propagate(graph, 1.0, 0.0);
-        XorTest.printGraph(graph);
+        Assert.assertTrue(XorTest.propagate(graph, 1.0, 1.0) < 0.25);
+        Assert.assertTrue(XorTest.propagate(graph, 0.0, 0.0) < 0.25);
+        Assert.assertTrue(XorTest.propagate(graph, 1.0, 0.0) > 0.75);
+        Assert.assertTrue(XorTest.propagate(graph, 0.0, 1.0) > 0.75);
     }
 
     private static final ActivationFunction activationFunction = new SineActivationFunction();
