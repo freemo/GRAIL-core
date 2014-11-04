@@ -32,25 +32,14 @@ public final class BlankGraphFactory {
 
         TitanGraph graph = TitanFactory.open(config);
 
-        final Module typedModule = new TypedGraphModuleBuilder()
-                                           .withClass(Synapse.class)
-                                           .withClass(BackpropSynapse.class)
-                                           .withClass(BackpropNeuron.class)
-                                           .build();
-
-        final FramedGraphFactory factory = new FramedGraphFactory(typedModule, new GremlinGroovyModule(), new JavaHandlerModule());
+        final FramedGraphFactory factory = new GrailGraphFactory();
 
         return factory.create(graph);
     }
 
     public static FramedTransactionalGraph makeTinkerGraph() {
-        final Module typedModule = new TypedGraphModuleBuilder()
-                                           .withClass(Synapse.class)
-                                           .withClass(BackpropSynapse.class)
-                                           .withClass(BackpropNeuron.class)
-                                           .build();
-
-        final FramedGraphFactory factory = new FramedGraphFactory(typedModule, new GremlinGroovyModule(), new JavaHandlerModule());
+        //final FramedGraphFactory factory = new FramedGraphFactory(typedModule, new GremlinGroovyModule(), new JavaHandlerModule());
+        final FramedGraphFactory factory = new GrailGraphFactory();
 
         return factory.create(new MockTransactionalTinkerGraph());
     }
