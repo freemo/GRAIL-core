@@ -5,7 +5,7 @@ import com.syncleus.grail.neural.backprop.*;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import com.tinkerpop.frames.modules.javahandler.*;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
 import java.util.*;
@@ -28,17 +28,24 @@ public class GrailGraphFactory extends FramedGraphFactory {
                                            .withClass(Synapse.class)
                                            .withClass(BackpropSynapse.class)
                                            .withClass(BackpropNeuron.class);
+
         for(final Class<?> additionalClass : additionalClasses)
             typedModuleBuilder.withClass(additionalClass);
         return typedModuleBuilder.build();
     }
 
     private static Module[] constructModules(final Collection<? extends Module> modules) {
-        return GrailGraphFactory.combineModules(modules, new GremlinGroovyModule(), new JavaHandlerModule());
+        return GrailGraphFactory.combineModules(modules, new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
     }
 
     private static Module[] constructModules(final Collection<? extends Module> modules, final Collection<? extends Class<?>> types) {
-        return GrailGraphFactory.combineModules(modules, GrailGraphFactory.constructTypedModule(types), new GremlinGroovyModule(), new JavaHandlerModule());
+        return GrailGraphFactory.combineModules(modules, GrailGraphFactory.constructTypedModule(types), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
+    }
+
+    private static JavaHandlerModule constructHandlerModule() {
+        final JavaHandlerModule module = new JavaHandlerModule();
+        module.withFactory(new GrailHandlerFactory());
+        return module;
     }
 
     private static Module[] combineModules(final Collection<? extends Module> modules, Module... additionalModules) {
