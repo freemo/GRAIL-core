@@ -41,16 +41,16 @@ public class OrTest {
         graph.commit();
 
         for(int i = 0; i < 10000; i++) {
-            OrTest.train(graph, 0.0, 1.0, 1.0);
-            OrTest.train(graph, 1.0, 0.0, 1.0);
+            OrTest.train(graph, -1.0, 1.0, 1.0);
+            OrTest.train(graph, 1.0, -1.0, 1.0);
             OrTest.train(graph, 1.0, 1.0, 1.0);
-            OrTest.train(graph, 0.0, 0.0, 0.0);
+            OrTest.train(graph, -1.0, -1.0, -1.0);
         }
 
-        Assert.assertTrue(OrTest.propagate(graph, 1.0, 1.0) > 0.75);
-        Assert.assertTrue(OrTest.propagate(graph, 0.0, 0.0) < 0.25);
-        Assert.assertTrue(OrTest.propagate(graph, 1.0, 0.0) > 0.75);
-        Assert.assertTrue(OrTest.propagate(graph, 0.0, 1.0) > 0.75);
+        Assert.assertTrue(OrTest.propagate(graph, 1.0, 1.0) > 0.0);
+        Assert.assertTrue(OrTest.propagate(graph, -1.0, -1.0) < 0.0);
+        Assert.assertTrue(OrTest.propagate(graph, 1.0, -1.0) > 0.0);
+        Assert.assertTrue(OrTest.propagate(graph, -1.0, 1.0) > 0.0);
     }
 
     private static final ActivationFunction activationFunction = new SineActivationFunction();

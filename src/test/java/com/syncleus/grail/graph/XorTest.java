@@ -5,7 +5,6 @@ import com.syncleus.grail.neural.*;
 import com.syncleus.grail.neural.backprop.*;
 import com.thinkaurelius.titan.core.*;
 import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
-import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 import com.tinkerpop.frames.*;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
@@ -16,7 +15,6 @@ import org.apache.commons.configuration.*;
 import org.junit.*;
 
 import java.io.File;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.*;
 
 import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration.INDEX_BACKEND_KEY;
@@ -24,7 +22,7 @@ import static com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfigu
 
 public class XorTest {
     @Test
-    public void testNodeInstantiation() {
+    public void testXor() {
         final FramedTransactionalGraph<?> graph = XorTest.makeBlankGraph();
 
         final List<BackpropNeuron> newInputNeurons = new ArrayList<BackpropNeuron>(2);
@@ -58,15 +56,15 @@ public class XorTest {
         graph.commit();
 
         for(int i = 0; i < 10000; i++) {
-            XorTest.train(graph, 0.0, 1.0, 1.0);
-            XorTest.train(graph, 1.0, 0.0, 1.0);
-            XorTest.train(graph, 1.0, 1.0, 0.0);
-            XorTest.train(graph, 0.0, 0.0, 0.0);
+            XorTest.train(graph, -1.0, 1.0, 1.0);
+            XorTest.train(graph, 1.0, -1.0, 1.0);
+            XorTest.train(graph, 1.0, 1.0, -1.0);
+            XorTest.train(graph, -1.0, -1.0, -1.0);
         }
-        Assert.assertTrue(XorTest.propagate(graph, 1.0, 1.0) < 0.25);
-        Assert.assertTrue(XorTest.propagate(graph, 0.0, 0.0) < 0.25);
-        Assert.assertTrue(XorTest.propagate(graph, 1.0, 0.0) > 0.75);
-        Assert.assertTrue(XorTest.propagate(graph, 0.0, 1.0) > 0.75);
+        Assert.assertTrue(XorTest.propagate(graph, 1.0, 1.0) < 0.0);
+        Assert.assertTrue(XorTest.propagate(graph, -1.0, -1.0) < 0.0);
+        Assert.assertTrue(XorTest.propagate(graph, 1.0, -1.0) > 0.0);
+        Assert.assertTrue(XorTest.propagate(graph, -1.0, 1.0) > 0.0);
     }
 
     private static final ActivationFunction activationFunction = new SineActivationFunction();
