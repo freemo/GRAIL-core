@@ -8,7 +8,7 @@ public class GrailModule implements Module {
     @Override
     public Graph configure(final Graph baseGraph, final FramedGraphConfiguration config) {
         config.addMethodHandler(new TypedAdjacencyMethodHandler());
-        config.addMethodHandler(new IncidenceMethodHandler());
+        config.addMethodHandler(new TypedIncidenceMethodHandler());
         return baseGraph;
     }
 }

@@ -108,23 +108,23 @@ public class TitanGods {
 
         // edges
 
-        jupiter.addEdge("father", saturn);
+        ElementHelper.setProperties(jupiter.addEdge("father", saturn), "classType", "Father");
         jupiter.addEdge("lives", sky).setProperty("reason", "loves fresh breezes");
         jupiter.addEdge("brother", neptune);
         jupiter.addEdge("brother", pluto);
 
-        neptune.addEdge("father", saturn);
+        ElementHelper.setProperties(neptune.addEdge("father", saturn), "classType", "Father");
         neptune.addEdge("lives", sea).setProperty("reason", "loves waves");
         neptune.addEdge("brother", jupiter);
         neptune.addEdge("brother", pluto);
 
-        hercules.addEdge("father", jupiter);
+        ElementHelper.setProperties(hercules.addEdge("father", jupiter), "classType", "Father");
         hercules.addEdge("lives", sky).setProperty("reason", "loves heights");
         ElementHelper.setProperties(hercules.addEdge("battled", nemean), "time", 1, "place", Geoshape.point(38.1f, 23.7f));
         ElementHelper.setProperties(hercules.addEdge("battled", hydra), "time", 2, "place", Geoshape.point(37.7f, 23.9f));
         ElementHelper.setProperties(hercules.addEdge("battled", cerberus), "time", 12, "place", Geoshape.point(39f, 22f));
 
-        pluto.addEdge("father", saturn);
+        ElementHelper.setProperties(pluto.addEdge("father", saturn), "classType", "Father");
         pluto.addEdge("brother", jupiter);
         pluto.addEdge("brother", neptune);
         pluto.addEdge("lives", tartarus).setProperty("reason", "no fear of death");

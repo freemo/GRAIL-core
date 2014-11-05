@@ -20,7 +20,7 @@ public class TypedAdjacencyMethodHandler implements MethodHandler<TypedAdjacency
     public Object processElement(final Object frame, final Method method, final Object[] arguments, final TypedAdjacency annotation, final FramedGraph<?> framedGraph, final Element element) {
 
         if( ! (element instanceof Vertex) )
-            throw new IllegalStateException("element is not a type of VertexFrame " + element.getClass().getName());
+            throw new IllegalStateException("element is not a type of Vertex " + element.getClass().getName());
         final Vertex vertex = (Vertex) element;
 
         if(annotation.label() == null)

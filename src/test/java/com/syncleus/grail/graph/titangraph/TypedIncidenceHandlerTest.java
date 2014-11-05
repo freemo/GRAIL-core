@@ -6,9 +6,9 @@ import com.tinkerpop.frames.*;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import org.junit.*;
 
-public class TypedAdjacencyHandlerTest {
+public class TypedIncidenceHandlerTest {
     @Test
-    public void testGetSons() {
+    public void testGetSonEdges() {
         final TitanGraph godGraph = TitanGods.create("./target/TitanTestDB");
         final FramedGraphFactory factory = new FramedGraphFactory(new GrailModule(), new GremlinGroovyModule());
 
@@ -18,13 +18,13 @@ public class TypedAdjacencyHandlerTest {
         final God father = gods.iterator().next();
         Assert.assertEquals(father.getName(), "jupiter");
 
-        final Iterable<? extends God> children = father.getSons(God.class);
-        final God child = children.iterator().next();
-        Assert.assertEquals(child.getName(), "hercules");
+        final Iterable<? extends FatherEdge> childEdges = father.getSonEdges(FatherEdge.class);
+        final FatherEdge childEdge = childEdges.iterator().next();
+        Assert.assertEquals(childEdge.getSon().getName(), "hercules");
     }
 
     @Test
-    public void testGetSon() {
+    public void testGetSonEdge() {
         final TitanGraph godGraph = TitanGods.create("./target/TitanTestDB");
         final FramedGraphFactory factory = new FramedGraphFactory(new GrailModule(), new GremlinGroovyModule());
 
@@ -34,22 +34,7 @@ public class TypedAdjacencyHandlerTest {
         final God father = gods.iterator().next();
         Assert.assertEquals(father.getName(), "jupiter");
 
-        final God child = father.getSon(God.class);
-        Assert.assertEquals(child.getName(), "hercules");
-    }
-
-    @Test
-    public void testAddSon() {
-        final TitanGraph godGraph = TitanGods.create("./target/TitanTestDB");
-        final FramedGraphFactory factory = new FramedGraphFactory(new GrailModule(), new GremlinGroovyModule());
-
-        final FramedGraph framedGraph = factory.create(godGraph);
-
-        final Iterable<God> gods = (Iterable<God>) framedGraph.getVertices("name", "jupiter", God.class);
-        final God father = gods.iterator().next();
-        Assert.assertEquals(father.getName(), "jupiter");
-
-        final God child = father.addSon(God.class);
-        Assert.assertNull(child.getName());
+        final FatherEdge childEdge = father.getSonEdge(FatherEdge.class);
+        Assert.assertEquals(childEdge.getSon().getName(), "hercules");
     }
 }

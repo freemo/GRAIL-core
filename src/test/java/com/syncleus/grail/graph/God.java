@@ -25,13 +25,22 @@ public interface God {
     God getSon();
 
     @TypedAdjacency(label="father", direction= Direction.IN)
-    <N extends God> Iterable<? extends N> getSons(Class<? extends God> type);
+    <N extends God> Iterable<? extends N> getSons(Class<? extends N> type);
 
     @TypedAdjacency(label="father", direction= Direction.IN)
-    <N extends God> N getSon(Class<? extends God> type);
+    <N extends God> N getSon(Class<? extends N> type);
 
     @TypedAdjacency(label="father", direction=Direction.IN)
     <N extends God> N addSon(Class<? extends N> type);
+
+    @TypedIncidence(label="father", direction= Direction.IN)
+    <N extends FatherEdge> Iterable<? extends N> getSonEdges(Class<? extends N> type);
+
+    @TypedIncidence(label="father", direction= Direction.IN)
+    <N extends FatherEdge> N getSonEdge(Class<? extends N> type);
+
+    @TypedIncidence(label="father", direction=Direction.IN)
+    <N extends FatherEdge> N addSonEdge(Class<? extends N> type);
 
     @Adjacency(label="lives")
     Location getHome();
