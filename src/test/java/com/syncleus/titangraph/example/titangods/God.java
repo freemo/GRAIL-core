@@ -1,10 +1,14 @@
 package com.syncleus.titangraph.example.titangods;
 
-import com.tinkerpop.blueprints.Vertex;
+import com.syncleus.grail.graph.TypedAdjacency;
+import com.tinkerpop.blueprints.*;
 import com.tinkerpop.frames.*;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.javahandler.*;
+import com.tinkerpop.frames.modules.typedgraph.*;
 
+@TypeField("classType")
+@TypeValue("God")
 public interface God {
     @Property("name")
     public String getName();
@@ -20,6 +24,9 @@ public interface God {
 
     @GremlinGroovy("it.in('father')")
     public God getSon();
+
+    @TypedAdjacency(label="father", direction= Direction.IN)
+    public Iterable<? extends God> getSons(Class<? extends God> type);
 
     @Adjacency(label="lives")
     public Location getHome();

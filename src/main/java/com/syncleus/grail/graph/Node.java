@@ -6,12 +6,12 @@ import com.tinkerpop.frames.modules.javahandler.*;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("type")
-@JavaHandlerClass(AbstractNode.class)
+//@JavaHandlerClass(AbstractNode.class)
 public interface Node extends VertexFrame  {
     @Adjacency(label="targets")
     Iterable<? extends Node> getTargets();
 
-    @JavaHandler
+    @TypedAdjacency(label="targets")
     <N extends Node> Iterable<? extends N> getTargets(Class<? extends N> type);
 
     @Adjacency(label="targets")
@@ -31,13 +31,13 @@ public interface Node extends VertexFrame  {
     @Adjacency(label="targets")
     Node addTarget();
 
-    @JavaHandler
+    @TypedAdjacency(label="targets")
     <N extends Node> N addTarget(Class<? extends N> type);
 
     @Adjacency(label="targets", direction= Direction.IN)
     Iterable<? extends Node> getSources();
 
-    @JavaHandler
+    @TypedAdjacency(label="targets", direction=Direction.IN)
     <N extends Node> Iterable<? extends N> getSources(Class<? extends N> type);
 
     @Adjacency(label="targets", direction=Direction.IN)
@@ -55,7 +55,7 @@ public interface Node extends VertexFrame  {
     @Adjacency(label="targets", direction=Direction.IN)
     Node addSource();
 
-    @JavaHandler
+    @TypedAdjacency(label="targets", direction=Direction.IN)
     <N extends Node> N addSource(Class<? extends N> type);
 
     @Incidence(label = "targets")

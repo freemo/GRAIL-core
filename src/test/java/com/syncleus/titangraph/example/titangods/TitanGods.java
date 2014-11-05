@@ -70,6 +70,7 @@ public class TitanGods {
         saturn.setProperty("name", "saturn");
         saturn.setProperty("age", 10000);
         saturn.setProperty("type", "titan");
+        saturn.setProperty("classType", "God");
 
         Vertex sky = graph.addVertex(null);
         ElementHelper.setProperties(sky, "name", "sky", "type", "location", "other", "more useless info");
@@ -78,31 +79,31 @@ public class TitanGods {
         ElementHelper.setProperties(sea, "name", "sea", "type", "location");
 
         Vertex jupiter = graph.addVertex(null);
-        ElementHelper.setProperties(jupiter, "name", "jupiter", "age", 5000, "type", "god");
+        ElementHelper.setProperties(jupiter, "name", "jupiter", "age", 5000, "type", "god", "classType", "God");
 
         Vertex neptune = graph.addVertex(null);
-        ElementHelper.setProperties(neptune, "name", "neptune", "age", 4500, "type", "god");
+        ElementHelper.setProperties(neptune, "name", "neptune", "age", 4500, "type", "god", "classType", "God");
 
         Vertex hercules = graph.addVertex(null);
-        ElementHelper.setProperties(hercules, "name", "hercules", "age", 30, "type", "demigod");
+        ElementHelper.setProperties(hercules, "name", "hercules", "age", 30, "type", "demigod", "classType", "God");
 
         Vertex alcmene = graph.addVertex(null);
-        ElementHelper.setProperties(alcmene, "name", "alcmene", "age", 45, "type", "human");
+        ElementHelper.setProperties(alcmene, "name", "alcmene", "age", 45, "type", "human", "classType", "God");
 
         Vertex pluto = graph.addVertex(null);
-        ElementHelper.setProperties(pluto, "name", "pluto", "age", 4000, "type", "god");
+        ElementHelper.setProperties(pluto, "name", "pluto", "age", 4000, "type", "god", "classType", "God");
 
         Vertex nemean = graph.addVertex(null);
-        ElementHelper.setProperties(nemean, "name", "nemean", "type", "monster");
+        ElementHelper.setProperties(nemean, "name", "nemean", "type", "monster", "classType", "God");
 
         Vertex hydra = graph.addVertex(null);
-        ElementHelper.setProperties(hydra, "name", "hydra", "type", "monster");
+        ElementHelper.setProperties(hydra, "name", "hydra", "type", "monster", "classType", "God");
 
         Vertex cerberus = graph.addVertex(null);
-        ElementHelper.setProperties(cerberus, "name", "cerberus", "type", "monster");
+        ElementHelper.setProperties(cerberus, "name", "cerberus", "type", "monster", "classType", "God");
 
         Vertex tartarus = graph.addVertex(null);
-        ElementHelper.setProperties(tartarus, "name", "tartarus", "type", "location");
+        ElementHelper.setProperties(tartarus, "name", "tartarus", "type", "location", "classType", "God");
 
         // edges
 
