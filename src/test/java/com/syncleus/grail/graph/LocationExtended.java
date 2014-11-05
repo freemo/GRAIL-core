@@ -1,4 +1,4 @@
-package com.syncleus.titangraph.example.titangods;
+package com.syncleus.grail.graph;
 
 import com.tinkerpop.frames.Property;
 

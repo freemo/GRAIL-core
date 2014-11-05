@@ -84,12 +84,12 @@ public class TypedAdjacencyMethodHandler implements MethodHandler<TypedAdjacency
         final TypeField typeField = TypedAdjacencyMethodHandler.determineTypeField(type);
         switch(direction) {
             case BOTH:
-                return framedGraph.frame(new GremlinPipeline<Vertex, Vertex>(vertex).both(label).has(typeField.value(), typeValue.value()).V().next(), type);
+                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).both(label).has(typeField.value(), typeValue.value()).next(), type);
             case IN:
-                return framedGraph.frame(new GremlinPipeline<Vertex, Vertex>(vertex).in(label).has(typeField.value(), typeValue.value()).V().next(), type);
+                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).in(label).has(typeField.value(), typeValue.value()).next(), type);
             //Assume out direction
             default:
-                return framedGraph.frame(new GremlinPipeline<Vertex, Vertex>(vertex).out(label).has(typeField.value(), typeValue.value()).V().next(), type);
+                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).out(label).has(typeField.value(), typeValue.value()).next(), type);
         }
     }
 
@@ -97,17 +97,24 @@ public class TypedAdjacencyMethodHandler implements MethodHandler<TypedAdjacency
         TypedAdjacencyMethodHandler.determineTypeValue(type);
         TypedAdjacencyMethodHandler.determineTypeField(type);
 
-        final Object newNode = framedGraph.addVertex(null, type);
+        final Vertex newVertex = framedGraph.addVertex(null);
+        final Object newNode = framedGraph.frame(newVertex, type);
         assert type.isInstance(newNode);
 
         switch(direction) {
             case BOTH:
+                framedGraph.addEdge(null, vertex, newVertex, label);
+                framedGraph.addEdge(null, newVertex, vertex, label);
+                break;
             case IN:
+                framedGraph.addEdge(null, newVertex, vertex, label);
+                break;
             //Assume out direction
             default:
+                framedGraph.addEdge(null, vertex, newVertex, label);
         }
 
-        return null;
+        return newNode;
     }
 
     private static void checkReturnType(final Method method, final Class type) {

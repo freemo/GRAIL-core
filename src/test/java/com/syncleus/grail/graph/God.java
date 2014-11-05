@@ -1,6 +1,5 @@
-package com.syncleus.titangraph.example.titangods;
+package com.syncleus.grail.graph;
 
-import com.syncleus.grail.graph.TypedAdjacency;
 import com.tinkerpop.blueprints.*;
 import com.tinkerpop.frames.*;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
@@ -11,28 +10,34 @@ import com.tinkerpop.frames.modules.typedgraph.*;
 @TypeValue("God")
 public interface God {
     @Property("name")
-    public String getName();
+    String getName();
 
     @Property("age")
-    public Integer getAge();
+    Integer getAge();
 
     @Property("type")
-    public String getType();
+    String getType();
 
     @Adjacency(label="father")
-    public God getFather();
+    God getFather();
 
     @GremlinGroovy("it.in('father')")
-    public God getSon();
+    God getSon();
 
     @TypedAdjacency(label="father", direction= Direction.IN)
-    public Iterable<? extends God> getSons(Class<? extends God> type);
+    <N extends God> Iterable<? extends N> getSons(Class<? extends God> type);
+
+    @TypedAdjacency(label="father", direction= Direction.IN)
+    <N extends God> N getSon(Class<? extends God> type);
+
+    @TypedAdjacency(label="father", direction=Direction.IN)
+    <N extends God> N addSon(Class<? extends N> type);
 
     @Adjacency(label="lives")
-    public Location getHome();
+    Location getHome();
 
     @JavaHandler
-    public boolean isAgeEven();
+    boolean isAgeEven();
 
     public abstract class Impl implements JavaHandlerContext<Vertex>, God {
 

@@ -1,4 +1,4 @@
-package com.syncleus.titangraph.example.titangods;
+package com.syncleus.grail.graph.titangraph;
 
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
@@ -6,6 +6,7 @@ import com.thinkaurelius.titan.core.TitanKey;
 import com.thinkaurelius.titan.core.attribute.Geoshape;
 import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
 import com.tinkerpop.blueprints.*;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.util.ElementHelper;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -52,7 +53,7 @@ public class TitanGods {
         graph.makeKey("type").dataType(String.class).make();
 
         final TitanKey time = graph.makeKey("time").dataType(Integer.class).make();
-        final TitanKey reason = graph.makeKey("reason").dataType(String.class).indexed(INDEX_NAME, Edge.class).make();
+        final TitanKey reason = graph.makeKey("reason").dataType(String.class).indexed(INDEX_NAME, com.tinkerpop.blueprints.Edge.class).make();
         graph.makeKey("place").dataType(Geoshape.class).indexed(INDEX_NAME, Edge.class).make();
 
         graph.makeLabel("father").manyToOne().make();

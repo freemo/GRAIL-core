@@ -1,6 +1,5 @@
-package com.syncleus.titangraph.example.titangods;
+package com.syncleus.grail.graph.titangraph;
 
-import com.syncleus.titangraph.example.titangods.TitanGods;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.Vertex;
 import org.junit.*;
