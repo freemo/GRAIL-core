@@ -35,11 +35,11 @@ public class GrailGraphFactory extends FramedGraphFactory {
     }
 
     private static Module[] constructModules(final Collection<? extends Module> modules) {
-        return GrailGraphFactory.combineModules(modules, new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
+        return GrailGraphFactory.combineModules(modules, new GrailModule(), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
     }
 
     private static Module[] constructModules(final Collection<? extends Module> modules, final Collection<? extends Class<?>> types) {
-        return GrailGraphFactory.combineModules(modules, GrailGraphFactory.constructTypedModule(types), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
+        return GrailGraphFactory.combineModules(modules, new GrailModule(), GrailGraphFactory.constructTypedModule(types), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
     }
 
     private static JavaHandlerModule constructHandlerModule() {

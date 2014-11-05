@@ -20,11 +20,13 @@ public interface Node extends VertexFrame  {
     @Adjacency(label="targets")
     void removeTarget(Node target);
 
-    @Adjacency(label="targets")
-    Node addTarget(Node target);
+//    @Adjacency(label="targets")
+//    Node addTarget(Node target);
 
-    @JavaHandler
-    <N extends Node> N addTarget(Node target, Class<? extends N> type);
+//    @JavaHandler
+//    <N extends Node> N addTarget(Node target, Class<? extends N> type);
+    @Adjacency(label="targets")
+    <N extends Node> N addTarget(Node target);
 
     @Adjacency(label="targets")
     Node addTarget();
@@ -45,10 +47,10 @@ public interface Node extends VertexFrame  {
     void removeSource(Node target);
 
     @Adjacency(label="targets", direction=Direction.IN)
-    Node addSource(Node target);
+    <N extends Node> N addSource(Node target);
 
-    @JavaHandler
-    <N extends Node> N addSource(Node target, Class<? extends N> type);
+//    @JavaHandler
+//    <N extends Node> N addSource(Node target, Class<? extends N> type);
 
     @Adjacency(label="targets", direction=Direction.IN)
     Node addSource();

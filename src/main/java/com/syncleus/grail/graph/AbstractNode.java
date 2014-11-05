@@ -13,7 +13,7 @@ public abstract class AbstractNode implements JavaHandlerContext<Vertex>, Node {
         return this.frameVertices(this.gremlin().out("targets").has("type", typeValue.value()).V(), type);
     }
 
-    @Override
+//    @Override
     public <N extends Node> N addTarget(final Node target, final Class<? extends N> type) {
         if( ! type.isInstance(target) )
             throw new IllegalArgumentException("target is not of the indicated type");
@@ -42,7 +42,7 @@ public abstract class AbstractNode implements JavaHandlerContext<Vertex>, Node {
         return this.frameVertices(this.gremlin().in("targets").has("type", typeValue.value()).V(), type);
     }
 
-    @Override
+//    @Override
     public <N extends Node> N addSource(final Node source, final Class<? extends N> type) {
         if( ! type.isInstance(source) )
             throw new IllegalArgumentException("target is not of the indicated type");
