@@ -6,7 +6,6 @@ import com.tinkerpop.frames.modules.javahandler.*;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("type")
-//@JavaHandlerClass(AbstractNode.class)
 public interface Node extends VertexFrame  {
     @Adjacency(label="targets")
     Iterable<? extends Node> getTargets();
@@ -53,14 +52,11 @@ public interface Node extends VertexFrame  {
     @Incidence(label = "targets")
     Iterable<? extends Edge> getTargetEdges();
 
-    @JavaHandler
+    @TypedIncidence(label="targets")
     <E extends Edge> Iterable<? extends E> getTargetEdges(Class<? extends E> type);
 
     @Incidence(label = "targets")
-    Edge addTargetEdge(Edge target);
-
-    @JavaHandler
-    <E extends Edge> E addTargetEdge(Edge target, Class<? extends E> type);
+    <E extends Edge> E addTargetEdge(Edge target);
 
     @Incidence(label = "targets")
     void removeTargetEdge(Edge target);
@@ -68,14 +64,11 @@ public interface Node extends VertexFrame  {
     @Incidence(label = "targets", direction=Direction.IN)
     Iterable<? extends Edge> getSourceEdges();
 
-    @JavaHandler
+    @TypedIncidence(label="targets", direction=Direction.IN)
     <E extends Edge> Iterable<? extends E> getSourceEdges(Class<? extends E> type);
 
     @Incidence(label = "targets", direction=Direction.IN)
-    Edge addSourceEdge(Edge source);
-
-    @JavaHandler
-    <E extends Edge> E addSourceEdge(Edge target, Class<? extends E> type);
+    <E extends Edge> E addSourceEdge(Edge target);
 
     @Incidence(label = "targets", direction=Direction.IN)
     void removeSourceEdge(Edge source);

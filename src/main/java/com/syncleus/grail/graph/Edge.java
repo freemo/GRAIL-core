@@ -5,7 +5,6 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("type")
-@JavaHandlerClass(AbstractEdge.class)
 public interface Edge extends EdgeFrame {
     @InVertex
     Node getTarget();

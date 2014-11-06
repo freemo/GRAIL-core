@@ -17,13 +17,13 @@ public class OrTest {
         final BackpropNeuron newOutputNeuron = OrTest.createNeuron(graph, "output");
 
         //connect all hidden neurons to the output neuron
-        for( BackpropNeuron inputNeurons : newInputNeurons ) {
-            graph.addEdge(null, inputNeurons.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
+        for( BackpropNeuron inputNeuron : newInputNeurons ) {
+            graph.addEdge(null, inputNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);//.asEdge().setProperty("type", "BackpropSynapse");
         }
         //create bias neuron for output neuron
         final BackpropNeuron biasNeuron = OrTest.createNeuron(graph, "bias");
         biasNeuron.setSignal(1.0);
-        graph.addEdge(null, biasNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);
+        graph.addEdge(null, biasNeuron.asVertex(), newOutputNeuron.asVertex(), "targets", BackpropSynapse.class);//.asEdge().setProperty("type", "BackpropSynapse");
         graph.commit();
 
         for(int i = 0; i < 10000; i++) {
@@ -33,10 +33,10 @@ public class OrTest {
             OrTest.train(graph, -1.0, -1.0, -1.0);
         }
 
-        Assert.assertTrue(OrTest.propagate(graph, 1.0, 1.0) > 0.0);
-        Assert.assertTrue(OrTest.propagate(graph, -1.0, -1.0) < 0.0);
-        Assert.assertTrue(OrTest.propagate(graph, 1.0, -1.0) > 0.0);
-        Assert.assertTrue(OrTest.propagate(graph, -1.0, 1.0) > 0.0);
+        Assert.assertTrue("expected >0.0, got: " + OrTest.propagate(graph, 1.0, 1.0), OrTest.propagate(graph, 1.0, 1.0) > 0.0);
+        Assert.assertTrue("expected <0.0, got: " + OrTest.propagate(graph, -1.0, -1.0), OrTest.propagate(graph, -1.0, -1.0) < 0.0);
+        Assert.assertTrue("expected >0.0, got: " + OrTest.propagate(graph, 1.0, -1.0), OrTest.propagate(graph, 1.0, -1.0) > 0.0);
+        Assert.assertTrue("expected >0.0, got: " + OrTest.propagate(graph, -1.0, 1.0), OrTest.propagate(graph, -1.0, 1.0) > 0.0);
     }
 
     private static final ActivationFunction activationFunction = new SineActivationFunction();
