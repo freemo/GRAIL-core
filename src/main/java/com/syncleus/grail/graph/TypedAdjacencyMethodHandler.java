@@ -5,11 +5,19 @@ import com.tinkerpop.frames.*;
 import com.tinkerpop.frames.annotations.AdjacencyAnnotationHandler;
 import com.tinkerpop.frames.modules.MethodHandler;
 import com.tinkerpop.frames.modules.typedgraph.*;
+import com.tinkerpop.gremlin.Tokens;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 import java.lang.reflect.Method;
+import java.util.*;
 
 public class TypedAdjacencyMethodHandler implements MethodHandler<TypedAdjacency> {
+
+    private final Map<String, Set<String>> hierarchy;
+
+    public TypedAdjacencyMethodHandler(final Map<String, Set<String>> hierarchy) {
+        this.hierarchy = hierarchy;
+    }
 
     @Override
     public Class<TypedAdjacency> getAnnotationType() {
@@ -52,10 +60,10 @@ public class TypedAdjacencyMethodHandler implements MethodHandler<TypedAdjacency
                 final Class type = (Class) arguments[0];
 
                 if( method.getReturnType().isAssignableFrom(Iterable.class))
-                    return TypedAdjacencyMethodHandler.getNodes(type, annotation.direction(), annotation.label(), framedGraph, vertex);
+                    return this.getNodes(type, annotation.direction(), annotation.label(), framedGraph, vertex);
 
                 TypedAdjacencyMethodHandler.checkReturnType(method, type);
-                return TypedAdjacencyMethodHandler.getNode(type, annotation.direction(), annotation.label(), framedGraph, vertex);
+                return this.getNode(type, annotation.direction(), annotation.label(), framedGraph, vertex);
             }
             else
                 throw new IllegalStateException("method " + method.getName() + " was annotated with @TypedAdjacency but had more than 1 arguments.");
@@ -64,32 +72,34 @@ public class TypedAdjacencyMethodHandler implements MethodHandler<TypedAdjacency
             throw new IllegalStateException("method " + method.getName() + " was annotated with @TypedAdjacency but did not begin with either of the following keywords: add, get");
     }
 
-    private static Iterable getNodes(final Class type, final Direction direction, final String label, final FramedGraph<?> framedGraph, final Vertex vertex) {
+    private Iterable getNodes(final Class type, final Direction direction, final String label, final FramedGraph<?> framedGraph, final Vertex vertex) {
         final TypeValue typeValue = TypedAdjacencyMethodHandler.determineTypeValue(type);
         final TypeField typeField = TypedAdjacencyMethodHandler.determineTypeField(type);
+        Set<String> allAllowedValues = this.hierarchy.get(typeValue.value());
         switch(direction) {
         case BOTH:
-            return framedGraph.frameVertices((Iterable<Vertex>) new GremlinPipeline<Vertex, Vertex>(vertex).both(label).has(typeField.value(), typeValue.value()), type);
+            return framedGraph.frameVertices((Iterable<Vertex>) new GremlinPipeline<Vertex, Vertex>(vertex).both(label).has(typeField.value(), Tokens.T.in, allAllowedValues), type);
         case IN:
-            return framedGraph.frameVertices((Iterable<Vertex>) new GremlinPipeline<Vertex, Vertex>(vertex).in(label).has(typeField.value(), typeValue.value()), type);
+            return framedGraph.frameVertices((Iterable<Vertex>) new GremlinPipeline<Vertex, Vertex>(vertex).in(label).has(typeField.value(), Tokens.T.in, allAllowedValues), type);
         //Assume out direction
         default:
-            return framedGraph.frameVertices((Iterable<Vertex>) new GremlinPipeline<Vertex, Vertex>(vertex).out(label).has(typeField.value(), typeValue.value()), type);
+            return framedGraph.frameVertices((Iterable<Vertex>) new GremlinPipeline<Vertex, Vertex>(vertex).out(label).has(typeField.value(), Tokens.T.in, allAllowedValues), type);
         }
 
     }
 
-    private static Object getNode(final Class type, final Direction direction, final String label, final FramedGraph<?> framedGraph, final Vertex vertex) {
+    private Object getNode(final Class type, final Direction direction, final String label, final FramedGraph<?> framedGraph, final Vertex vertex) {
         final TypeValue typeValue = TypedAdjacencyMethodHandler.determineTypeValue(type);
         final TypeField typeField = TypedAdjacencyMethodHandler.determineTypeField(type);
+        final Set<String> allAllowedValues = this.hierarchy.get(typeValue.value());
         switch(direction) {
             case BOTH:
-                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).both(label).has(typeField.value(), typeValue.value()).next(), type);
+                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).both(label).has(typeField.value(), Tokens.T.in, allAllowedValues).next(), type);
             case IN:
-                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).in(label).has(typeField.value(), typeValue.value()).next(), type);
+                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).in(label).has(typeField.value(), Tokens.T.in, allAllowedValues).next(), type);
             //Assume out direction
             default:
-                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).out(label).has(typeField.value(), typeValue.value()).next(), type);
+                return framedGraph.frame((Vertex) new GremlinPipeline<Vertex, Vertex>(vertex).out(label).has(typeField.value(), Tokens.T.in, allAllowedValues).next(), type);
         }
     }
 

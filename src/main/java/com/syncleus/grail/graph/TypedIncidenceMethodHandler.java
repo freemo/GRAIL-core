@@ -8,8 +8,15 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.*;
 
 public class TypedIncidenceMethodHandler implements MethodHandler<TypedIncidence> {
+
+    private final Map<String, Set<String>> hierarchy;
+
+    public TypedIncidenceMethodHandler(final Map<String, Set<String>> hierarchy) {
+        this.hierarchy = hierarchy;
+    }
 
     @Override
     public Class<TypedIncidence> getAnnotationType() {

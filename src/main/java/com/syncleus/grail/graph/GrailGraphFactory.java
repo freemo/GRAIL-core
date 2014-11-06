@@ -6,11 +6,13 @@ import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.*;
-import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
+import com.tinkerpop.frames.modules.typedgraph.*;
 
 import java.util.*;
 
 public class GrailGraphFactory extends FramedGraphFactory {
+    private static final Set<Class<?>> BUILT_IN_TYPES = new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{Synapse.class, BackpropNeuron.class, BackpropSynapse.class}));
+
     public GrailGraphFactory() {
         super(GrailGraphFactory.constructModules(Collections.<Module>emptySet()));
     }
@@ -23,23 +25,22 @@ public class GrailGraphFactory extends FramedGraphFactory {
         super(GrailGraphFactory.constructModules(modules, types));
     }
 
-    protected static Module constructTypedModule(final Collection<? extends Class<?>> additionalClasses) {
-        final TypedGraphModuleBuilder typedModuleBuilder = new TypedGraphModuleBuilder()
-                                           .withClass(Synapse.class)
-                                           .withClass(BackpropSynapse.class)
-                                           .withClass(BackpropNeuron.class);
+    private static Module constructTypedModule(final Collection<? extends Class<?>> types) {
+        final TypedGraphModuleBuilder typedModuleBuilder = new TypedGraphModuleBuilder();
+        for(final Class<?> type : types )
+            typedModuleBuilder.withClass(type);
 
-        for(final Class<?> additionalClass : additionalClasses)
-            typedModuleBuilder.withClass(additionalClass);
         return typedModuleBuilder.build();
     }
 
     private static Module[] constructModules(final Collection<? extends Module> modules) {
-        return GrailGraphFactory.combineModules(modules, new GrailModule(), GrailGraphFactory.constructTypedModule(Collections.<Class<?>>emptyList()), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
+        return GrailGraphFactory.combineModules(modules, new GrailModule(GrailGraphFactory.BUILT_IN_TYPES), GrailGraphFactory.constructTypedModule(GrailGraphFactory.BUILT_IN_TYPES), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
     }
 
-    private static Module[] constructModules(final Collection<? extends Module> modules, final Collection<? extends Class<?>> types) {
-        return GrailGraphFactory.combineModules(modules, new GrailModule(), GrailGraphFactory.constructTypedModule(types), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
+    private static Module[] constructModules(final Collection<? extends Module> modules, final Collection<? extends Class<?>> additionalTypes) {
+        final Set<Class<?>> types = new HashSet<Class<?>>(GrailGraphFactory.BUILT_IN_TYPES);
+        types.addAll(additionalTypes);
+        return GrailGraphFactory.combineModules(modules, new GrailModule(types), GrailGraphFactory.constructTypedModule(types), new GremlinGroovyModule(), GrailGraphFactory.constructHandlerModule());
     }
 
     private static JavaHandlerModule constructHandlerModule() {
@@ -57,6 +58,4 @@ public class GrailGraphFactory extends FramedGraphFactory {
         }
         return allModules;
     }
-
-
 }

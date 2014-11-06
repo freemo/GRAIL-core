@@ -3,14 +3,19 @@ package com.syncleus.grail.graph.titangraph;
 import com.syncleus.grail.graph.*;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.frames.*;
+import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import org.junit.*;
 
+import java.util.*;
+
 public class TypedIncidenceHandlerTest {
+    private static final Set<Class<?>> TEST_TYPES = new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{God.class, FatherEdge.class}));
+
     @Test
     public void testGetSonEdges() {
         final TitanGraph godGraph = TitanGods.create("./target/TitanTestDB");
-        final FramedGraphFactory factory = new FramedGraphFactory(new GrailModule(), new GremlinGroovyModule());
+        final FramedGraphFactory factory = new GrailGraphFactory(Collections.<Module>emptyList(), TypedIncidenceHandlerTest.TEST_TYPES);
 
         final FramedGraph<?> framedGraph = factory.create(godGraph);
 
@@ -26,7 +31,7 @@ public class TypedIncidenceHandlerTest {
     @Test
     public void testGetSonEdge() {
         final TitanGraph godGraph = TitanGods.create("./target/TitanTestDB");
-        final FramedGraphFactory factory = new FramedGraphFactory(new GrailModule(), new GremlinGroovyModule());
+        final FramedGraphFactory factory = new GrailGraphFactory(Collections.<Module>emptyList(), TypedIncidenceHandlerTest.TEST_TYPES);
 
         final FramedGraph framedGraph = factory.create(godGraph);
 
