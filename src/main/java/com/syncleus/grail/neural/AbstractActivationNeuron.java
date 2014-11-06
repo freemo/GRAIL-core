@@ -5,7 +5,7 @@ import com.syncleus.grail.graph.*;
 import com.syncleus.grail.neural.backprop.*;
 import com.tinkerpop.frames.modules.javahandler.Initializer;
 
-public abstract class AbstractActivationNeuron extends AbstractSignalingNode implements ActivationNeuron {
+public abstract class AbstractActivationNeuron implements ActivationNeuron {
 
     private ActivationFunction activationFunction;
 
@@ -35,14 +35,11 @@ public abstract class AbstractActivationNeuron extends AbstractSignalingNode imp
     }
 
     @Override
-    public void tick() {
+    public void propagate() {
         this.setActivity(0.0);
-        for (final Edge currentEdge : this.getSourceEdges(BackpropSynapse.class)) {
-            if( currentEdge instanceof SignalMultiplyingEdge) {
-                final SignalMultiplyingEdge currentSynapse = (SignalMultiplyingEdge) currentEdge;
-                currentSynapse.propagate();
-                this.setActivity(this.getActivity() + currentSynapse.getSignal());
-            }
+        for (final SignalMultiplyingEdge currentSynapse : this.getSourceEdges(BackpropSynapse.class)) {
+            currentSynapse.propagate();
+            this.setActivity(this.getActivity() + currentSynapse.getSignal());
         }
         this.setSignal( this.getActivationFunction().activate(this.getActivity()) );
     }

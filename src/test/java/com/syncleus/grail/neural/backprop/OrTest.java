@@ -72,7 +72,7 @@ public class OrTest {
         final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
         final BackpropNeuron outputNeuron = outputNeurons.next();
         Assert.assertTrue(!outputNeurons.hasNext());
-        outputNeuron.tick();
+        outputNeuron.propagate();
         graph.commit();
         return outputNeuron.getSignal();
     }

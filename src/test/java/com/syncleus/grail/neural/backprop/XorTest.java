@@ -94,16 +94,16 @@ public class XorTest {
         graph.commit();
 
         final Iterator<BackpropNeuron> hiddenNeurons = graph.getVertices("layer", "hidden", BackpropNeuron.class).iterator();
-        hiddenNeurons.next().tick();
-        hiddenNeurons.next().tick();
-        hiddenNeurons.next().tick();
+        hiddenNeurons.next().propagate();
+        hiddenNeurons.next().propagate();
+        hiddenNeurons.next().propagate();
         Assert.assertTrue(!hiddenNeurons.hasNext());
         graph.commit();
 
         final Iterator<BackpropNeuron> outputNeurons = graph.getVertices("layer", "output", BackpropNeuron.class).iterator();
         final BackpropNeuron outputNeuron = outputNeurons.next();
         Assert.assertTrue(!outputNeurons.hasNext());
-        outputNeuron.tick();
+        outputNeuron.propagate();
         graph.commit();
         return outputNeuron.getSignal();
     }

@@ -2,7 +2,7 @@ package com.syncleus.grail.graph;
 
 import com.tinkerpop.frames.Property;
 
-public interface WeightedEdge extends Edge {
+public interface Weighted {
     @Property("weight")
     public Double getWeight();
     @Property("weight")
