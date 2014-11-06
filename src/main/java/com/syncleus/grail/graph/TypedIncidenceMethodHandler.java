@@ -110,7 +110,7 @@ public class TypedIncidenceMethodHandler implements MethodHandler<TypedIncidence
         if( typeField == null ) {
             Class<?>[] parents = type.getInterfaces();
             for( final Class<?> parent : parents ) {
-                typeField = TypedIncidenceMethodHandler.determineTypeField(parent);
+                typeField = TypedIncidenceMethodHandler.determineTypeFieldRecursive(parent);
                 if( typeField != null )
                     return typeField;
             }

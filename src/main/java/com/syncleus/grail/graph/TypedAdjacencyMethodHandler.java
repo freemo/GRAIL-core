@@ -130,9 +130,32 @@ public class TypedAdjacencyMethodHandler implements MethodHandler<TypedAdjacency
     }
 
     private static TypeField determineTypeField(final Class<?> type) {
-        final TypeField typeField = type.getAnnotation(TypeField.class);
-        if( typeField == null )
-            throw new IllegalArgumentException("The specified type does not have a parent with a typeField annotation");
+        TypeField typeField = type.getAnnotation(TypeField.class);
+        if( typeField == null ) {
+            Class<?>[] parents = type.getInterfaces();
+            for( final Class<?> parent : parents ) {
+                typeField = TypedAdjacencyMethodHandler.determineTypeFieldRecursive(parent);
+                if( typeField != null )
+                    return typeField;
+            }
+            if( typeField == null )
+                throw new IllegalArgumentException("The specified type does not have a parent with a typeField annotation.");
+        }
+
+        return typeField;
+    }
+
+    private static TypeField determineTypeFieldRecursive(final Class<?> type) {
+        TypeField typeField = type.getAnnotation(TypeField.class);
+        if( typeField == null ) {
+            Class<?>[] parents = type.getInterfaces();
+            for( final Class<?> parent : parents ) {
+                typeField = TypedAdjacencyMethodHandler.determineTypeFieldRecursive(parent);
+                if( typeField != null )
+                    return typeField;
+            }
+            return null;
+        }
         return typeField;
     }
 }
