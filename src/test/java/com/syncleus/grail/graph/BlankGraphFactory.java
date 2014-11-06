@@ -1,14 +1,8 @@
 package com.syncleus.grail.graph;
 
-import com.syncleus.grail.neural.Synapse;
-import com.syncleus.grail.neural.backprop.*;
 import com.thinkaurelius.titan.core.*;
 import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
 import com.tinkerpop.frames.*;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 import org.apache.commons.configuration.*;
 
 import java.io.File;

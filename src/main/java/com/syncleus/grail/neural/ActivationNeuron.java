@@ -1,11 +1,12 @@
 package com.syncleus.grail.neural;
 
 import com.syncleus.grail.activation.ActivationFunction;
+import com.syncleus.grail.graph.SignalingNode;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.*;
 
 @JavaHandlerClass(AbstractActivationNeuron.class)
-public interface ActivationNeuron extends Neuron {
+public interface ActivationNeuron extends SignalingNode {
     @JavaHandler
     void tick();
 

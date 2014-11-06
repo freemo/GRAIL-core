@@ -1,6 +1,5 @@
 package com.syncleus.grail.graph;
 
-import com.syncleus.grail.neural.Synapse;
 import com.syncleus.grail.neural.backprop.*;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.modules.Module;
@@ -11,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.*;
 import java.util.*;
 
 public class GrailGraphFactory extends FramedGraphFactory {
-    private static final Set<Class<?>> BUILT_IN_TYPES = new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{Synapse.class, BackpropNeuron.class, BackpropSynapse.class}));
+    private static final Set<Class<?>> BUILT_IN_TYPES = new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{SignalMultiplyingEdge.class, BackpropNeuron.class, BackpropSynapse.class}));
 
     public GrailGraphFactory() {
         super(GrailGraphFactory.constructModules(Collections.<Module>emptySet()));

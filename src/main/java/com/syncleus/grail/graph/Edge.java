@@ -1,7 +1,6 @@
 package com.syncleus.grail.graph;
 
 import com.tinkerpop.frames.*;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("type")
