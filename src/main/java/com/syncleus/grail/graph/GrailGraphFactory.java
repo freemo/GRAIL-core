@@ -45,7 +45,6 @@ public class GrailGraphFactory extends FramedGraphFactory {
 
     private static JavaHandlerModule constructHandlerModule() {
         final JavaHandlerModule module = new JavaHandlerModule();
-        module.withFactory(new GrailHandlerFactory());
         return module;
     }
 
