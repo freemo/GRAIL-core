@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("type")
 @JavaHandlerClass(AbstractActivationNeuron.class)
-public interface ActivationNeuron extends Signaler, Propagator, VertexFrame {
+public interface ActivationNeuron extends Propagator, VertexFrame {
     @Override
     @JavaHandler
     void propagate();

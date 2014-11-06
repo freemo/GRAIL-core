@@ -7,7 +7,7 @@ import com.tinkerpop.frames.modules.typedgraph.*;
 @TypeField("type")
 @TypeValue("Synapse")
 @JavaHandlerClass(AbstractSignalMultiplyingEdge.class)
-public interface SignalMultiplyingEdge extends Weighted, Signaler, Propagator, EdgeFrame {
+public interface SignalMultiplyingEdge extends Weighted, Propagator, EdgeFrame {
     @OutVertex
     Signaler getSource();
 
